@@ -1,0 +1,17 @@
+{
+  "name": "bikeship",
+  "version": "1.0.0",
+  "description": "to connect bikers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kraet",
+  "license": "ISC",
+  "dependencies": {
+    "ol": "^9.2.4"
+  },
+  "devDependencies": {
+    "vite": "^5.3.2"
+  }
+}
