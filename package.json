@@ -11,9 +11,7 @@
   "author": "kraet",
   "license": "ISC",
   "dependencies": {
-    "ol": "^9.2.4"
-  },
-  "devDependencies": {
+    "ol": "^9.2.4",
     "vite": "^5.3.2"
   }
 }
