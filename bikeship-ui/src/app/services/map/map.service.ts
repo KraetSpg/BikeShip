@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
-import { ListenOptions } from "net";
 
 @Injectable({  providedIn: 'root'})
 export class MapService {
 
-    getBikerMeetUps(){
-
+    getBikerMeetupsFromBackend() {
+        fetch("https://innolab.spengergasse.at/schueler/db/30/items/bikermeetups")
+          .then(response => response.json())
+          .then(bikertreffs => {
+            return bikertreffs;
+        })
     }
-
 }
