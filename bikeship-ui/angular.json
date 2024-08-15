@@ -87,7 +87,13 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "public/header/",
+                "output": "/"
               }
+
             ],
             "styles": [
               "src/styles.css"
