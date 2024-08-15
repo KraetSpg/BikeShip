@@ -24,9 +24,11 @@ import { MapService } from '../../services/map/map.service';
 export class MapKomponent implements OnInit {
 
   private mapService = inject(MapService)
+  public mode = "view";
+  public map!: Map;
 
   //PopUp when clicking
-  popup = document.getElementById("popup")!; //The ! at the end says that I am sure that popul is never null
+  private popup = document.getElementById("popup")!; //The ! at the end says that I am sure that popul is never null
   overlay = new Overlay({
     element: this.popup,
     autoPan: {
@@ -35,6 +37,7 @@ export class MapKomponent implements OnInit {
       },
     },
   });
+
 
   //used to store features
   source = new VectorSource({
@@ -46,27 +49,65 @@ export class MapKomponent implements OnInit {
   })
 
   ngOnInit(): void {
-      //The map that is displayed (an OpenStreetLayerMap)
-    const map = new Map({
-    //overlays: [this.overlay],
-    target: document.getElementById('map-container')!,
-    layers: [
-      new TileLayer({
-        source: new OSM(),
+    this.map = new Map({
+      overlays: [this.overlay],
+      target: 'map-container',
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+      ],
+      view: new View({
+        center: fromLonLat([16.37381890 ,48.20817430]),
+        zoom: 10,
       }),
-    ],
-    view: new View({
-      center: fromLonLat([0, 0]),
-      zoom: 2,
-    }),
-  });
-    //Stay at same position with refresh
-    // this.map.addInteraction(new Link());
+    });
 
-    const bikerMeetUps = this.mapService.getBikerMeetupsFromBackend()
+    this.map.addLayer(this.featureLayer);
+  };
 
-    console.log(bikerMeetUps)
+  public selectViewMode() {
+    //Indicates which mode is on
+    document.getElementById('plus')?.classList.remove("bg-slate-400")
+    document.getElementById('eye')?.classList.add("bg-slate-400")
+    this.mode = "view";
 
-    //this.map.addLayer(this.featureLayer)
+
+  }
+
+  public selectAddMode() {
+    //Indicates which mode is on
+    document.getElementById('eye')?.classList.remove("bg-slate-400")
+    document.getElementById('plus')?.classList.add("bg-slate-400")
+    this.mode = "add";
+
+    /*
+
+    this.map.addEventListener("singleclick", (e) => {
+      let coordinates = e.coordinate?;
+      this.overlay.setPosition(coordinates);
+    
+      let feature = new Feature({
+        geometry: new Point(coordinates),
+        name: 'Bikertreff',
+      })
+    
+      const iconStyle = new Style({
+        image: new Icon({
+          anchor: [0.5, 46],
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'pixels',
+          src: 'data/marker-black.svg',
+        }),
+      });
+    
+      feature.setStyle(iconStyle);
+    
+      source.addFeature(feature);
+    })
+
+  */
+
+    
   }
 }
