@@ -3,3 +3,12 @@
     <img src="plus.svg" alt="plus" (click)="selectAddMode()" id="plus">
 </div>
 <div id="map-container" class="h-screen w-screen"></div>
+<div id="popup" class="ol-popup bg-white">
+  <form style="display: flex; flex-direction: column; justify-content: center;">
+    <label for="name">Name:</label>
+    <input type="text" id="name">
+    <label for="startzeit">Startzeit:</label>
+    <input type="date" id="startzeit">
+    <input type="button" value="Erstellen" style="margin-top: 10px;" onclick="createMeetUp();">
+  </form>
+</div>
