@@ -14,6 +14,7 @@ import Overlay from 'ol/Overlay.js';
 import { MapService } from '../../services/map/map.service';
 import { Observable } from 'rxjs';
 import { ListenerFunction } from 'ol/events';
+import Interaction from 'ol/interaction/Interaction';
 
 @Component({
   selector: 'app-map-component',
@@ -63,13 +64,15 @@ export class MapKomponent implements OnInit {
     });
     this.map.addLayer(this.featureLayer);
 
+    this.map.addInteraction(new Link());
+
     let popupElement = document.getElementById('popup')!;
     this.popup.setElement(popupElement)
   };
 
   public selectViewMode() {
-    document.getElementById('plus')?.classList.remove("bg-slate-400")
-    document.getElementById('eye')?.classList.add("bg-slate-400")
+    document.getElementById('plus')?.classList.add("opacity-50")
+    document.getElementById('eye')?.classList.remove("opacity-50")
     this.mode = "view";
 
     this.map.un("singleclick", this.addMarker);
@@ -77,8 +80,8 @@ export class MapKomponent implements OnInit {
   }
 
   public selectAddMode() {
-    document.getElementById('eye')?.classList.remove("bg-slate-400")
-    document.getElementById('plus')?.classList.add("bg-slate-400")
+    document.getElementById('eye')?.classList.add("opacity-50")
+    document.getElementById('plus')?.classList.remove("opacity-50")
     this.mode = "add";
 
     this.map.on("singleclick", this.addMarker.bind(this))
@@ -95,10 +98,11 @@ export class MapKomponent implements OnInit {
   
     const iconStyle = new Style({
       image: new Icon({
-        anchor: [0.5, 46],
+        scale: 0.08,
+        anchor: [0.5, 800],
         anchorXUnits: 'fraction',
         anchorYUnits: 'pixels',
-        src: 'public/neues_feature.svg',
+        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/cd424e00df54f2a488959a7458d08f0921f69dd2/bikeship-ui/public/neues_feature.svg',
       }),
     });
     feature.setStyle(iconStyle);
