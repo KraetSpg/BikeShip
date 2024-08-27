@@ -1,25 +1,28 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
-import { EventType, RouterOutlet } from '@angular/router';
-import { Map, MapBrowserEvent, MapEvent, View } from 'ol';
-import { fromLonLat } from 'ol/proj';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
-import Link from 'ol/interaction/Link';
-import OSM from 'ol/source/OSM';
-import TileLayer from 'ol/layer/Tile';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
+import { Map, MapBrowserEvent, View } from 'ol';
 import Feature from 'ol/Feature.js';
-import { Icon, Style } from 'ol/style.js';
 import Point from 'ol/geom/Point.js';
+import Link from 'ol/interaction/Link';
+import TileLayer from 'ol/layer/Tile';
+import VectorLayer from 'ol/layer/Vector';
 import Overlay from 'ol/Overlay.js';
+import { fromLonLat } from 'ol/proj';
+import OSM from 'ol/source/OSM';
+import VectorSource from 'ol/source/Vector';
+import { Icon, Style } from 'ol/style.js';
 import { MapService } from '../../services/map/map.service';
-import { Observable } from 'rxjs';
-import { ListenerFunction } from 'ol/events';
-import Interaction from 'ol/interaction/Interaction';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-map-component',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [
+    RouterOutlet,
+    ReactiveFormsModule
+  ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.css',
   providers: [MapService]
@@ -27,8 +30,13 @@ import Interaction from 'ol/interaction/Interaction';
 export class MapKomponent implements OnInit {
 
   private mapService = inject(MapService)
-  public mode = "view";
   public map!: Map;
+  public bindedAddMarkerFunction = this.addMarker.bind(this);
+  public popupForm = new FormGroup({
+    name: new FormControl(''),
+    startzeit: new FormControl(''),
+    beschreibung: new FormControl('')
+  })
 
   popup = new Overlay({
     autoPan: {
@@ -38,14 +46,13 @@ export class MapKomponent implements OnInit {
     },
   });
 
-
   //used to store features
-  source = new VectorSource({
+  addIconSource = new VectorSource({
   });
 
   //Layer that gets added to the Map
   featureLayer = new VectorLayer({
-    source: this.source
+    source: this.addIconSource
   })
 
   ngOnInit(): void {
@@ -58,44 +65,44 @@ export class MapKomponent implements OnInit {
         }),
       ],
       view: new View({
-        center: fromLonLat([16.37381890 ,48.20817430]),
+        center: fromLonLat([16.37381890, 48.20817430]),
         zoom: 10,
       }),
     });
-    this.map.addLayer(this.featureLayer);
 
+    this.map.addLayer(this.featureLayer);
     this.map.addInteraction(new Link());
 
     let popupElement = document.getElementById('popup')!;
     this.popup.setElement(popupElement)
+
+    this.displayBikerMeetups();
   };
 
   public selectViewMode() {
     document.getElementById('plus')?.classList.add("opacity-50")
     document.getElementById('eye')?.classList.remove("opacity-50")
-    this.mode = "view";
 
-    this.map.un("singleclick", this.addMarker);
-    console.log(this.map.getListeners("singleclick"))
+    this.cleanUpMap();
   }
 
   public selectAddMode() {
     document.getElementById('eye')?.classList.add("opacity-50")
     document.getElementById('plus')?.classList.remove("opacity-50")
-    this.mode = "add";
 
-    this.map.on("singleclick", this.addMarker.bind(this))
+    this.map.on("singleclick", this.bindedAddMarkerFunction)
   }
 
   addMarker(event: MapBrowserEvent<UIEvent>) {
+    this.addIconSource.clear();
     let coordinates = event.coordinate;
-    this.popup.setPosition(coordinates);
+    this.popup.setPosition(coordinates); // Show the form
 
     let feature = new Feature({
       geometry: new Point(coordinates),
       name: 'Bikertreff',
     })
-  
+
     const iconStyle = new Style({
       image: new Icon({
         scale: 0.08,
@@ -106,7 +113,38 @@ export class MapKomponent implements OnInit {
       }),
     });
     feature.setStyle(iconStyle);
-  
-    this.source.addFeature(feature);
+    this.addIconSource.addFeature(feature); // Display Icon on the Map
+  }
+
+  cleanUpMap() {
+    this.map.un("singleclick", this.bindedAddMarkerFunction);
+    this.popup.setPosition(undefined);
+    this.addIconSource.clear();
+  }
+
+  collectPopupDataAndPost() {
+    let formData = this.popupForm.value;
+    let coordinates = this.popup.getPosition();
+
+    //Not the best solution should check in HTML with Angular
+    if (coordinates != null && formData.name != null && formData.startzeit != null && formData.beschreibung != null) {
+      this.mapService.postBikerMeetUp(coordinates, formData.name, formData.startzeit, formData.beschreibung)
+        .then((responseValue) => {
+          if (responseValue != null) {
+            alert("Successfully created") // Lets do a MessageService for this
+          } else {
+            alert("Error")
+          }
+        })
+    } else {
+      throw new Error("Some Values are missing")
+    }
+  }
+
+  displayBikerMeetups() {
+    this.mapService.getBikerMeetupsFromBackend()
+    .then((bikermeetups) => {
+      console.log(bikermeetups)
+    })
   }
 }
