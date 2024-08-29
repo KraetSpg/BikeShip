@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { resolve } from 'node:path';
 import { BikerMeetup } from '../../interfaces/BikerMeetup';
 import { Coordinate } from 'ol/coordinate';
+import { coordinateRelationship } from 'ol/extent';
 
 
 @Component({
@@ -50,17 +51,22 @@ export class MapKomponent implements OnInit {
   });
 
   //used to store features
-  addIconSource = new VectorSource({
+  addMeetUpSource = new VectorSource({
   });
+
+  addMeetupLayer = new VectorLayer({
+    source: this.addMeetUpSource
+  })
 
   //used to display all meetups
   meetupIconSource = new VectorSource({
   });
 
-  //Layer that gets added to the Map
-  featureLayer = new VectorLayer({
-    source: this.addIconSource
+  meetUpLayer = new VectorLayer({
+    source: this.meetupIconSource
   })
+
+
 
   ngOnInit(): void {
     this.map = new Map({
@@ -77,7 +83,8 @@ export class MapKomponent implements OnInit {
       }),
     });
 
-    this.map.addLayer(this.featureLayer);
+    this.map.addLayer(this.addMeetupLayer); // Add Layer for Add Mode
+    this.map.addLayer(this.meetUpLayer); // Add Layer where Meetups get displayed
     this.map.addInteraction(new Link());
 
     let popupElement = document.getElementById('popup')!;
@@ -101,7 +108,7 @@ export class MapKomponent implements OnInit {
   }
 
   displayAddMarker(event: MapBrowserEvent<UIEvent>) {
-    this.addIconSource.clear();
+    this.addMeetUpSource.clear();
     let coordinates = event.coordinate;
     this.popup.setPosition(coordinates); // Show the form
 
@@ -120,13 +127,13 @@ export class MapKomponent implements OnInit {
       }),
     });
     feature.setStyle(iconStyle);
-    this.addIconSource.addFeature(feature); // Display Icon on the Map
+    this.addMeetUpSource.addFeature(feature); // Display Icon on the Map
   }
 
   cleanUpMap() {
     this.map.un("singleclick", this.bindedDisplayAddMarkerFunction);
     this.popup.setPosition(undefined);
-    this.addIconSource.clear();
+    this.addMeetUpSource.clear();
   }
 
   collectPopupDataAndPost() {
@@ -150,15 +157,15 @@ export class MapKomponent implements OnInit {
 
   displayBikerMeetups() {
     this.mapService.getBikerMeetupsFromBackend()
-    .then((bikermeetups: BikerMeetup[]) => {
-      for (let i = 0; i < bikermeetups.length; i++) {
-        let meetUp = bikermeetups[i];
-      }
-    })
+      .then((bikermeetups: BikerMeetup[]) => {
+        for (let i = 0; i < bikermeetups.length; i++) {
+          let meetUp = bikermeetups[i];
+          this.displayMeetUpMarker([meetUp.xValue, meetUp.yValue], meetUp.name, meetUp.date, meetUp.desc, meetUp.date_created)
+        }
+      })
   }
 
   displayMeetUpMarker(coordinates: Coordinate, name: string, date: string, desc: string, created_on: string) {
-
     let feature = new Feature({
       geometry: new Point(coordinates),
       name: name,
@@ -173,7 +180,7 @@ export class MapKomponent implements OnInit {
         anchor: [0.5, 800],
         anchorXUnits: 'fraction',
         anchorYUnits: 'pixels',
-        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/cd424e00df54f2a488959a7458d08f0921f69dd2/bikeship-ui/public/neues_feature.svg',
+        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/workbranch/bikeship-ui/public/bikertreffs.svg',
       }),
     });
     feature.setStyle(iconStyle);

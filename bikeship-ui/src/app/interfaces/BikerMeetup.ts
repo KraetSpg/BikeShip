@@ -5,8 +5,8 @@ export interface BikerMeetup {
     name: string,
     date: string,
     desc: string,
-    xValue: string,
-    yValue: string,
+    xValue: number,
+    yValue: number,
     date_created: string,
     user_created: string,
 }
