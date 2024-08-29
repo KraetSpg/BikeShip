@@ -1,15 +1,19 @@
 import { Injectable } from "@angular/core";
 import { Coordinate } from "ol/coordinate";
+import { BikerMeetup } from "../../interfaces/BikerMeetup";
+import Executor from "ol/render/canvas/Executor";
 
 @Injectable({  providedIn: 'root'})
 export class MapService {
 
-    async getBikerMeetupsFromBackend() {
-        let response;
+    async getBikerMeetupsFromBackend(): Promise<BikerMeetup[]> {
+        let response!: BikerMeetup[];
         await fetch("https://innolab.spengergasse.at/schueler/db/30/items/bikermeetups")
-          .then(response => response.json())
-          .then(bikertreffs => {
-            response = bikertreffs;
+          .then( (response) => response.json())
+          .then( (bikertreffs) => {
+            response = bikertreffs.data;
+        }).catch( (reason) => {
+          throw new Error("ERROR" + reason)
         })
         return response;
     }

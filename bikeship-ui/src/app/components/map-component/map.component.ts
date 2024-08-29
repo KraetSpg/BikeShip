@@ -14,6 +14,9 @@ import VectorSource from 'ol/source/Vector';
 import { Icon, Style } from 'ol/style.js';
 import { MapService } from '../../services/map/map.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { resolve } from 'node:path';
+import { BikerMeetup } from '../../interfaces/BikerMeetup';
+import { Coordinate } from 'ol/coordinate';
 
 
 @Component({
@@ -31,7 +34,7 @@ export class MapKomponent implements OnInit {
 
   private mapService = inject(MapService)
   public map!: Map;
-  public bindedAddMarkerFunction = this.addMarker.bind(this);
+  public bindedDisplayAddMarkerFunction = this.displayAddMarker.bind(this);
   public popupForm = new FormGroup({
     name: new FormControl(''),
     startzeit: new FormControl(''),
@@ -48,6 +51,10 @@ export class MapKomponent implements OnInit {
 
   //used to store features
   addIconSource = new VectorSource({
+  });
+
+  //used to display all meetups
+  meetupIconSource = new VectorSource({
   });
 
   //Layer that gets added to the Map
@@ -90,10 +97,10 @@ export class MapKomponent implements OnInit {
     document.getElementById('eye')?.classList.add("opacity-50")
     document.getElementById('plus')?.classList.remove("opacity-50")
 
-    this.map.on("singleclick", this.bindedAddMarkerFunction)
+    this.map.on("singleclick", this.bindedDisplayAddMarkerFunction)
   }
 
-  addMarker(event: MapBrowserEvent<UIEvent>) {
+  displayAddMarker(event: MapBrowserEvent<UIEvent>) {
     this.addIconSource.clear();
     let coordinates = event.coordinate;
     this.popup.setPosition(coordinates); // Show the form
@@ -117,7 +124,7 @@ export class MapKomponent implements OnInit {
   }
 
   cleanUpMap() {
-    this.map.un("singleclick", this.bindedAddMarkerFunction);
+    this.map.un("singleclick", this.bindedDisplayAddMarkerFunction);
     this.popup.setPosition(undefined);
     this.addIconSource.clear();
   }
@@ -143,8 +150,33 @@ export class MapKomponent implements OnInit {
 
   displayBikerMeetups() {
     this.mapService.getBikerMeetupsFromBackend()
-    .then((bikermeetups) => {
-      console.log(bikermeetups)
+    .then((bikermeetups: BikerMeetup[]) => {
+      for (let i = 0; i < bikermeetups.length; i++) {
+        let meetUp = bikermeetups[i];
+      }
     })
+  }
+
+  displayMeetUpMarker(coordinates: Coordinate, name: string, date: string, desc: string, created_on: string) {
+
+    let feature = new Feature({
+      geometry: new Point(coordinates),
+      name: name,
+      date: date,
+      desc: desc,
+      created_on: created_on,
+    })
+
+    const iconStyle = new Style({
+      image: new Icon({
+        scale: 0.08,
+        anchor: [0.5, 800],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/cd424e00df54f2a488959a7458d08f0921f69dd2/bikeship-ui/public/neues_feature.svg',
+      }),
+    });
+    feature.setStyle(iconStyle);
+    this.meetupIconSource.addFeature(feature); // Display Icon on the Map
   }
 }
