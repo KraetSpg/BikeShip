@@ -19,7 +19,6 @@ import { BikerMeetup } from '../../interfaces/BikerMeetup';
 import { Coordinate } from 'ol/coordinate';
 import { coordinateRelationship } from 'ol/extent';
 
-
 @Component({
   selector: 'app-map-component',
   standalone: true,
@@ -180,7 +179,7 @@ export class MapKomponent implements OnInit {
         anchor: [0.5, 800],
         anchorXUnits: 'fraction',
         anchorYUnits: 'pixels',
-        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/workbranch/bikeship-ui/public/bikertreffs.svg',
+        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/main/bikeship-ui/public/bikertreffs.svg',
       }),
     });
     feature.setStyle(iconStyle);

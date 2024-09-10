@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dropshadow {
+    text-shadow: 2px 2px 2px black;
+}
+
+#background {
+    background-image: url(/workspaces/BikeShip_Magenta/bikeship-ui/public/mountains-bg.svg);
+    background-repeat: no-repeat;
+}
