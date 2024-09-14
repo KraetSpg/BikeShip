@@ -22,7 +22,7 @@
 }
 
 .birds {
-    animation: birdfly 20s linear infinite;
+    animation: birdfly 15s linear infinite;
 }
 
 @keyframes birdfly {
