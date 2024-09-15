@@ -26,6 +26,6 @@
 }
 
 @keyframes birdfly {
-    0%   {top: 50vh; left: -20vw;}
+    0%   {top: 50vh; left: -10vw;}
     100% {top: 10vh; left: 120vw;}
   }
