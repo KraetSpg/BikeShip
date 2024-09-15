@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Coordinate } from "ol/coordinate";
 import { BikerMeetup } from "../../interfaces/BikerMeetup";
-import Executor from "ol/render/canvas/Executor";
 
 @Injectable({  providedIn: 'root'})
 export class MapService {

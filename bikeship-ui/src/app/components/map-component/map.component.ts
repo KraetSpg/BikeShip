@@ -1,7 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 import { Map, MapBrowserEvent, View } from 'ol';
+import { Coordinate } from 'ol/coordinate';
 import Feature from 'ol/Feature.js';
 import Point from 'ol/geom/Point.js';
 import Link from 'ol/interaction/Link';
@@ -12,12 +13,8 @@ import { fromLonLat } from 'ol/proj';
 import OSM from 'ol/source/OSM';
 import VectorSource from 'ol/source/Vector';
 import { Icon, Style } from 'ol/style.js';
-import { MapService } from '../../services/map/map.service';
-import { ReactiveFormsModule } from '@angular/forms';
-import { resolve } from 'node:path';
 import { BikerMeetup } from '../../interfaces/BikerMeetup';
-import { Coordinate } from 'ol/coordinate';
-import { coordinateRelationship } from 'ol/extent';
+import { MapService } from '../../services/map/map.service';
 
 @Component({
   selector: 'app-map-component',
@@ -34,14 +31,29 @@ export class MapKomponent implements OnInit {
 
   private mapService = inject(MapService)
   public map!: Map;
-  public bindedDisplayAddMarkerFunction = this.displayAddMarker.bind(this);
-  public popupForm = new FormGroup({
+
+  public bindedDisplayAddMarkerFunction = this.displayAddPopUp.bind(this);
+  public bindedDisplayViewPopup = this.displayViewPopup.bind(this);
+  public addPopupForm = new FormGroup({
+    name: new FormControl(''),
+    startzeit: new FormControl(''),
+    beschreibung: new FormControl('')
+  })
+  public viewPopupForm = new FormGroup({
     name: new FormControl(''),
     startzeit: new FormControl(''),
     beschreibung: new FormControl('')
   })
 
-  popup = new Overlay({
+  addPopup = new Overlay({
+    autoPan: {
+      animation: {
+        duration: 250,
+      },
+    },
+  });
+  
+  viewPopup = new Overlay({
     autoPan: {
       animation: {
         duration: 250,
@@ -65,11 +77,9 @@ export class MapKomponent implements OnInit {
     source: this.meetupIconSource
   })
 
-
-
   ngOnInit(): void {
     this.map = new Map({
-      overlays: [this.popup],
+      overlays: [this.addPopup, this.viewPopup],
       target: 'map-container',
       layers: [
         new TileLayer({
@@ -86,10 +96,14 @@ export class MapKomponent implements OnInit {
     this.map.addLayer(this.meetUpLayer); // Add Layer where Meetups get displayed
     this.map.addInteraction(new Link());
 
-    let popupElement = document.getElementById('popup')!;
-    this.popup.setElement(popupElement)
+    let addPopupElement = document.getElementById('addPopup')!;
+    this.addPopup.setElement(addPopupElement);
+    
+    let viewPopupElement = document.getElementById('viewPopup')!;
+    this.viewPopup.setElement(viewPopupElement);
 
-    this.displayBikerMeetups();
+    this.displayBikerMeetups(); // Display all Meetups
+    this.selectViewMode(); // Default View Mode
   };
 
   public selectViewMode() {
@@ -97,19 +111,48 @@ export class MapKomponent implements OnInit {
     document.getElementById('eye')?.classList.remove("opacity-50")
 
     this.cleanUpMap();
+    this.map.on("pointermove", this.bindedDisplayViewPopup);  // Add function to Show MeetUp on Hover
   }
 
   public selectAddMode() {
     document.getElementById('eye')?.classList.add("opacity-50")
     document.getElementById('plus')?.classList.remove("opacity-50")
 
+    this.cleanUpMap();
     this.map.on("singleclick", this.bindedDisplayAddMarkerFunction)
   }
 
-  displayAddMarker(event: MapBrowserEvent<UIEvent>) {
+  displayViewPopup(event: MapBrowserEvent<UIEvent>) {
+    // If no feature hovered hide popup
+    if (this.map.getFeaturesAtPixel(event.pixel).length == 0) {
+      this.viewPopup.setPosition(undefined);
+      return;
+    } 
+    this.map.forEachFeatureAtPixel(event.pixel, (feature) => {
+      let name = feature.get("name");
+      let date = feature.get("date");
+      let desc = feature.get("desc");
+      let created_on = feature.get("created_on").split("T")[0];
+      let created_by = feature.get("created_by");
+      let coordinates: Coordinate = feature.getProperties()['geometry'].flatCoordinates;
+
+
+      document.getElementById('userCreated')!.innerText = created_by || "No Data";
+      document.getElementById('dateCreated')!.innerText = created_on || "No Data";
+  
+      this.viewPopup.setPosition(coordinates);
+      this.viewPopupForm.setValue({
+        name: name,
+        startzeit: date,
+        beschreibung: desc,
+      })
+    })
+  }
+
+  displayAddPopUp(event: MapBrowserEvent<UIEvent>) {
     this.addMeetUpSource.clear();
     let coordinates = event.coordinate;
-    this.popup.setPosition(coordinates); // Show the form
+    this.addPopup.setPosition(coordinates); // Show the form
 
     let feature = new Feature({
       geometry: new Point(coordinates),
@@ -130,14 +173,15 @@ export class MapKomponent implements OnInit {
   }
 
   cleanUpMap() {
+    this.map.un("pointermove", this.bindedDisplayViewPopup);
     this.map.un("singleclick", this.bindedDisplayAddMarkerFunction);
-    this.popup.setPosition(undefined);
+    this.addPopup.setPosition(undefined);
     this.addMeetUpSource.clear();
   }
 
   collectPopupDataAndPost() {
-    let formData = this.popupForm.value;
-    let coordinates = this.popup.getPosition();
+    let formData = this.addPopupForm.value;
+    let coordinates = this.addPopup.getPosition();
 
     //Not the best solution should check in HTML with Angular
     if (coordinates != null && formData.name != null && formData.startzeit != null && formData.beschreibung != null) {
@@ -159,18 +203,19 @@ export class MapKomponent implements OnInit {
       .then((bikermeetups: BikerMeetup[]) => {
         for (let i = 0; i < bikermeetups.length; i++) {
           let meetUp = bikermeetups[i];
-          this.displayMeetUpMarker([meetUp.xValue, meetUp.yValue], meetUp.name, meetUp.date, meetUp.desc, meetUp.date_created)
+          this.displayMeetUpMarker([meetUp.xValue, meetUp.yValue], meetUp.name, meetUp.date, meetUp.desc, meetUp.date_created, meetUp.user_created)
         }
       })
   }
 
-  displayMeetUpMarker(coordinates: Coordinate, name: string, date: string, desc: string, created_on: string) {
+  displayMeetUpMarker(coordinates: Coordinate, name: string, date: string, desc: string, created_on: string, created_by: string) {
     let feature = new Feature({
       geometry: new Point(coordinates),
       name: name,
       date: date,
       desc: desc,
       created_on: created_on,
+      created_by: created_by,
     })
 
     const iconStyle = new Style({
