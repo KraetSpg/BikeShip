@@ -7,6 +7,6 @@ export interface BikerMeetup {
     desc: string,
     xValue: number,
     yValue: number,
-    date_created: string,
-    user_created: string,
+    createdAt: string,
+    createdBy: string,
 }

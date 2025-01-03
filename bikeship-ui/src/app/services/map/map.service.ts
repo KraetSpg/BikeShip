@@ -5,12 +5,29 @@ import { BikerMeetup } from "../../interfaces/BikerMeetup";
 @Injectable({  providedIn: 'root'})
 export class MapService {
 
-    async getBikerMeetupsFromBackend(): Promise<BikerMeetup[]> {
+  async sendPostRequest(): Promise<void> {
+    let body = {
+      name: 'BikerMeetup',
+      xValue: 16.3725,
+      yValue: 48.2083,
+      date: '2021-06-01',
+      desc: 'This is a test'
+    }
+    await fetch('http://localhost:3000/api/bikermeetups', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body)
+    }).then(response => console.log(response))
+  }
+
+    async getBikerMeetupsFromNeon(): Promise<BikerMeetup[]> {
         let response!: BikerMeetup[];
-        await fetch("https://innolab.spengergasse.at/schueler/db/30/items/bikermeetups")
+        await fetch("http://localhost:3000/api/bikermeetups")
           .then( (response) => response.json())
           .then( (bikertreffs) => {
-            response = bikertreffs.data;
+            response = bikertreffs;
         }).catch( (reason) => {
           throw new Error("ERROR" + reason)
         })

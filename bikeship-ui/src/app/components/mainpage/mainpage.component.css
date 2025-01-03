@@ -6,8 +6,15 @@
     text-shadow: 2px 2px 2px black;
 }
 
-#background-image {
+.dropshadowgrey {
+    text-shadow: 2px 2px 2px grey;
+}
 
+html {
+    overflow-x: hidden;
+}
+
+#background-image {
     background-image: linear-gradient(rgba(0, 0, 0, 0.5),
             rgba(0, 0, 0, 0.5)),
         url(../../../../public/mountains-bg.jpg);

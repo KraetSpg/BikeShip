@@ -165,7 +165,7 @@ export class MapKomponent implements OnInit {
         anchor: [0.5, 800],
         anchorXUnits: 'fraction',
         anchorYUnits: 'pixels',
-        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/cd424e00df54f2a488959a7458d08f0921f69dd2/bikeship-ui/public/neues_feature.svg',
+        src: '/neues_feature.svg',
       }),
     });
     feature.setStyle(iconStyle);
@@ -199,11 +199,11 @@ export class MapKomponent implements OnInit {
   }
 
   displayBikerMeetups() {
-    this.mapService.getBikerMeetupsFromBackend()
+    this.mapService.getBikerMeetupsFromNeon()
       .then((bikermeetups: BikerMeetup[]) => {
         for (let i = 0; i < bikermeetups.length; i++) {
           let meetUp = bikermeetups[i];
-          this.displayMeetUpMarker([meetUp.xValue, meetUp.yValue], meetUp.name, meetUp.date, meetUp.desc, meetUp.date_created, meetUp.user_created)
+          this.displayMeetUpMarker([meetUp.xValue, meetUp.yValue], meetUp.name, meetUp.date, meetUp.desc, meetUp.createdAt, meetUp.createdBy)
         }
       })
   }
@@ -224,7 +224,7 @@ export class MapKomponent implements OnInit {
         anchor: [0.5, 800],
         anchorXUnits: 'fraction',
         anchorYUnits: 'pixels',
-        src: 'https://raw.githubusercontent.com/KraetSpg/BikeShip_Magenta/main/bikeship-ui/public/bikertreffs.svg',
+        src: '/bikertreffs.svg',
       }),
     });
     feature.setStyle(iconStyle);
