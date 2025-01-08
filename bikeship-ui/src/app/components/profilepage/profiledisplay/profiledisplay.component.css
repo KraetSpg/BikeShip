@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.gradient-background {
+  background-image: repeating-linear-gradient(
+		-90deg,
+		hsl(326, 85%, 90%) 0%,  /* blau */
+		hsl(53, 98%, 77%) 50%,  /* blau */
+    hsl(326, 85%, 90%) 100%,  /* blau */
+    hsl(53, 98%, 77%) 50%  /* blau */
+	);
+    background-size: 400% 200%;
+    animation: diagonal alternate 20s infinite;
+  }
+  
+  @keyframes diagonal {
+    0% {background-position: 0% 50%}
+    100% {background-position: 100% 50%}
+  }

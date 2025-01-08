@@ -1,43 +1,106 @@
-<div class="min-h-screen flex flex-col p-8 bg-gray-100 md:flex-row">
-    <div class="border-solid border-2 border-gray-300 rounded-lg p-4 bg-white flex-grow">
-        <div class="flex justify-between mb-12">
-            <div class="flex">
-                <div class="flex items-center">
-                    <img src="https://cdn.shopify.com/s/files/1/0791/8478/9777/files/Sport-Rider-Biker-Outfit.jpg?v=1702885602" alt="profile" class="w-32 h-32 rounded-full">
-                    <div class="ml-4 mt-12">
-                        <h1 class="text-2xl font-bold">John Doe</h1>
-                        <p class="text-gray-500">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Manila, Philippines</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
+<div class="min-h-scree p-8 bg-gray-100">
+    <div class="border-solid border-2 border-gray-300 rounded-lg bg-white">
+        <div class=" w-full h-32 gradient-background">
+        </div>
+        <div class="flex flex-col md:flex-row justify-between mb-12 -mt-12 ml-2">
             <div class="flex items-center">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Edit Profile</button>
-            </div>
-        </div>
-        <div class="mt-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <h2 class="text-5xl font-semibold mb-4">Personal Information</h2>
-                    <div>
-
-                    </div>
-                    <p class="text-gray-700 text-xl"><strong>State:</strong> <span id="state"> California</span>, <span id="country">USA</span></p>
-                    <div id="map" class="w-3/5 h-64 mt-2" style="border-radius: 20px;">
-                    </div>
-                    <p class="text-gray-700 text-xl"><strong>Age:</strong> 29</p>
-                    <p class="text-gray-700 text-xl"><strong>Description:</strong> Avid cyclist and bike enthusiast.</p>
-                </div>
-                <div>
-                    <h2 class="text-5xl font-semibold">Bike Information</h2>
-                    <p class="text-gray-700 text-xl"><strong>Bike Make:</strong> Trek</p>
-                    <p class="text-gray-700 text-xl"><strong>Bike Model:</strong> 2021 Trek Emonda SL 6</p>
-
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRPf1RSizppgYAkHu5vX2htwA27rqXEcph7g&s" alt="bike" class="w-full h-auto rounded-lg mt-2">
+                <img src="https://cdn.shopify.com/s/files/1/0791/8478/9777/files/Sport-Rider-Biker-Outfit.jpg?v=1702885602"
+                    alt="profile" class="w-36 h-36 rounded-full border-solid border-white border-4 drop-shadow-md">
+                <div class="ml-4 mt-12">
+                    <h1 class="text-2xl font-bold">Profile</h1>
+                    <p class="text-gray-500">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Update your Profile here</span>
+                    </p>
                 </div>
             </div>
+            <div class="flex items-center justify-center lg:mr-4">
+                <button class="relative inline-flex items-center justify-center p-1 overflow-hidden text-sm font-medium  rounded-lg group bg-gradient-to-br from-red-400 to-yellow-200">
+                    <span class="text-xl font-bold bg-white text-gray-900 shadow-sm relative p-4 px-6 bg-transparent transition-all ease-in duration-75 rounded-md group-hover:bg-opacity-0 group-hover:scale-105">
+                        Bearbeiten
+                    </span>
+                </button>
+            </div>
         </div>
+        <div class="px-2 border-t-2 border-solid border-gray-300">
+        </div>
+        <form [formGroup]="profileForm">
+            <div class="flex flex-col mt-10">
+                <div class="flex flex-col lg:flex-row w-full items-center lg:justify-between">
+                    <label for="username" class="text-lg font-bold lg:ml-4">Username</label>
+                    <p class="border-solid border-gray-200 w-5/6 border-2 text-center lg:text-start lg:pl-4 text-gray-600 text-xl rounded-lg lg:mr-4">{{userName}}</p>
+                    <input type="text" id="username" formControlName="userName"
+                    class="border-solid border-gray-300 mx-4 w-full border-2 hidden">
+                </div>
+                <div class="px-2 border-t-2 border-solid border-gray-300 mt-10">
+                </div>
+            </div>
+            
+            <div class="flex flex-col mt-10">
+                <div class="flex flex-col lg:flex-row w-full items-center lg:justify-between">
+                    <label for="username" class="text-lg font-bold lg:ml-4">Bundesland</label>
+                    <p class="border-solid border-gray-200 w-5/6 border-2 text-center lg:text-start lg:pl-4 text-gray-600 text-xl rounded-lg lg:mr-4">{{bundesland}}</p>
+                    <input type="text" id="username" formControlName="bundesland"
+                    class="border-solid border-gray-300 mx-4 w-full border-2 hidden">
+                </div>
+                <div class="px-2 border-t-2 border-solid border-gray-300 mt-10">
+                </div>
+            </div>
+
+            <div class="flex flex-col mt-10">
+                <div class="flex flex-col lg:flex-row w-full items-center lg:justify-between">
+                    <label for="username" class="text-lg font-bold lg:ml-4">Land</label>
+                    <p class="border-solid border-gray-200 w-5/6 border-2 text-center lg:text-start lg:pl-4 text-gray-600 text-xl rounded-lg lg:mr-4">{{land}}</p>
+                    <input type="text" id="username" formControlName="land"
+                    class="border-solid border-gray-300 mx-4 w-full border-2 hidden">
+                </div>
+                <div class="px-2 border-t-2 border-solid border-gray-300 mt-10">
+                </div>
+            </div>
+
+            <div class="flex flex-col mt-10">
+                <div class="flex flex-col lg:flex-row w-full items-center lg:justify-between">
+                    <label for="username" class="text-lg font-bold lg:ml-4">Alter</label>
+                    <p class="border-solid border-gray-200 w-5/6 border-2 text-center lg:text-start lg:pl-4 text-gray-600 text-xl rounded-lg lg:mr-4">{{alter}}</p>
+                    <input type="text" id="username" formControlName="alter"
+                    class="border-solid border-gray-300 mx-4 w-full border-2 hidden">
+                </div>
+                <div class="px-2 border-t-2 border-solid border-gray-300 mt-10">
+                </div>
+            </div>
+
+            <div class="flex flex-col mt-10">
+                <div class="flex flex-col lg:flex-row w-full items-center lg:justify-between">
+                    <label for="username" class="text-lg font-bold lg:ml-4">Beschreibung</label>
+                    <p class="border-solid border-gray-200 w-5/6 border-2 text-center lg:text-start lg:pl-4 text-gray-600 text-xl rounded-lg lg:mr-4">{{desc}}</p>
+                    <input type="text" id="username" formControlName="desc"
+                    class="border-solid border-gray-300 mx-4 w-full border-2 hidden">
+                </div>
+                <div class="px-2 border-t-2 border-solid border-gray-300 mt-10">
+                </div>
+            </div>
+
+            <div class="flex flex-col mt-10">
+                <div class="flex flex-col lg:flex-row w-full items-center lg:justify-between">
+                    <label for="username" class="text-lg font-bold lg:ml-4">Motorrad Marke</label>
+                    <p class="border-solid border-gray-200 w-5/6 border-2 text-center lg:text-start lg:pl-4 text-gray-600 text-xl rounded-lg lg:mr-4">{{marke}}</p>
+                    <input type="text" id="username" formControlName="marke"
+                    class="border-solid border-gray-300 mx-4 w-full border-2 hidden">
+                </div>
+                <div class="px-2 border-t-2 border-solid border-gray-300 mt-10">
+                </div>
+            </div>
+
+            <div class="flex flex-col mt-10">
+                <div class="flex flex-col lg:flex-row w-full items-center lg:justify-between">
+                    <label for="username" class="text-lg font-bold lg:ml-4">Motorrad Modell</label>
+                    <p class="border-solid border-gray-200 w-5/6 border-2 text-center lg:text-start lg:pl-4 text-gray-600 text-xl rounded-lg lg:mr-4">{{model}}</p>
+                    <input type="text" id="username" formControlName="model"
+                    class="border-solid border-gray-300 mx-4 w-full border-2 hidden">
+                </div>
+                <div class="px-2 border-t-2 border-solid border-gray-300 mt-10">
+                </div>
+            </div>
+        </form>
     </div>
 </div>
