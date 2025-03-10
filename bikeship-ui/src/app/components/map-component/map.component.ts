@@ -90,6 +90,7 @@ export class MapKomponent implements OnInit {
         center: fromLonLat([16.37381890, 48.20817430]),
         zoom: 10,
       }),
+      controls: [],
     });
 
     this.map.addLayer(this.addMeetupLayer); // Add Layer for Add Mode
