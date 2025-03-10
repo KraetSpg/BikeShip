@@ -1,7 +1,5 @@
 # BikeShip
 
-![BikeShip Banner](./assets/banner.png)
-
 BikeShip is a community-driven platform that connects bikers and helps them create meetups. With an interactive map feature, users can find and join biking groups, plan rides, and explore new routes together.
 
 ## 🚀 Features
